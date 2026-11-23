@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mood Music Hub</title>
+<style>
+:root{--bg:#0B0D11;--card:#151922;--ac:#8b5cff;--tx:#ECEEF3;--mu:#8a91a3;--gb:rgba(255,255,255,.09);--gl:rgba(21,25,34,.72)}
+*{box-sizing:border-box;margin:0}
+body{background:var(--bg);color:var(--tx);font:15px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;min-height:100vh;overflow-x:hidden}
+body::before{content:"";position:fixed;z-index:-1;width:700px;height:700px;border-radius:50%;top:-260px;right:-200px;background:var(--ac);filter:blur(170px);opacity:.2;transition:background .8s}
+body::after{content:"";position:fixed;z-index:-1;width:500px;height:500px;border-radius:50%;bottom:-200px;left:-160px;background:var(--ac);filter:blur(160px);opacity:.1;transition:background .8s}
+button,input,select{font:inherit;color:inherit}
+svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+svg.f{fill:currentColor}
+.glass{background:var(--gl);border:1px solid var(--gb);border-radius:18px;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+input[type=text],input[type=url],input[type=search],textarea{color:var(--tx);font:inherit;resize:vertical;background:rgba(0,0,0,.35);border:1px solid var(--gb);border-radius:12px;padding:10px 13px;width:100%;outline:none;transition:.2s}
+input:focus,textarea:focus{border-color:var(--ac);box-shadow:0 0 0 3px color-mix(in srgb,var(--ac) 25%,transparent)}
+.btn{display:inline-flex;gap:7px;align-items:center;justify-content:center;background:rgba(255,255,255,.05);border:1px solid var(--gb);border-radius:12px;padding:9px 15px;cursor:pointer;transition:.2s;white-space:nowrap;color:var(--tx)}
+.btn:hover{border-color:var(--ac);color:var(--ac)}
+.btn.p{background:var(--ac);border-color:transparent;color:#0B0D11;font-weight:700;box-shadow:0 6px 24px -4px color-mix(in srgb,var(--ac) 70%,transparent)}
+.btn.p:hover{color:#0B0D11;filter:brightness(1.12)}
+.btn.s{padding:5px 11px;font-size:13px;border-radius:10px}
+.btn.d:hover{border-color:#ff5252;color:#ff5252}
+.app{display:grid;grid-template-columns:260px 1fr;gap:22px;max-width:1300px;margin:auto;padding:20px 20px 130px}
+aside{position:sticky;top:20px;align-self:start;max-height:calc(100vh - 150px);overflow:auto;padding:14px}
+.logo{font-weight:900;letter-spacing:1.2px;font-size:15px;padding:6px 8px 14px}
+.logo b{color:var(--ac)}
+.mi{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:12px;cursor:pointer;transition:.2s;border:1px solid transparent}
+.mi:hover{background:rgba(255,255,255,.05)}
+.mi.on{background:color-mix(in srgb,var(--c) 16%,transparent);border-color:color-mix(in srgb,var(--c) 55%,transparent);box-shadow:0 0 22px -8px var(--c)}
+.mi .em{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;background:color-mix(in srgb,var(--c) 22%,transparent);font-size:15px;flex:none}
+.mi span.n{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mi small{color:var(--mu)}
+.side-a{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;padding:0 4px}
+main{min-width:0}
+.bar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px}
+.bar input{flex:1;min-width:180px}
+.hd{display:flex;align-items:flex-end;gap:14px;flex-wrap:wrap;margin-bottom:14px}
+.hd h1{font-size:32px;letter-spacing:-.8px;line-height:1.1}
+.hd h1 span{background:linear-gradient(90deg,var(--ac),#fff);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hd small{color:var(--mu);display:block;font-size:14px;margin-top:3px}
+.hd .sp{flex:1}
+.tr{display:grid;grid-template-columns:52px 1fr auto auto auto;gap:14px;align-items:center;padding:8px 12px 8px 8px;border-radius:14px;cursor:pointer;transition:.2s;border:1px solid transparent}
+.tr:hover{background:rgba(255,255,255,.05)}
+.tr.on{background:color-mix(in srgb,var(--ac) 14%,transparent);border-color:color-mix(in srgb,var(--ac) 45%,transparent)}
+.cv{width:52px;height:52px;border-radius:12px;display:grid;place-items:center;font-weight:800;font-size:20px;color:rgba(255,255,255,.75);overflow:hidden;position:relative;flex:none}
+.cv img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.tr.on.pl .cv::after{content:"";position:absolute;inset:0;background:rgba(0,0,0,.5)}
+.eq{position:absolute;inset:0;z-index:2;display:none;align-items:flex-end;justify-content:center;gap:3px;padding:14px 0}
+.tr.on.pl .eq{display:flex}
+.eq i{width:4px;background:var(--ac);border-radius:2px;animation:eq .8s infinite ease-in-out alternate}
+.eq i:nth-child(2){animation-delay:-.3s}.eq i:nth-child(3){animation-delay:-.6s}
+@keyframes eq{from{height:5px}to{height:22px}}
+.ti{min-width:0}.ti b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.ti small{color:var(--mu);display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mb{font-size:12px;padding:3px 11px;border-radius:99px;border:1px solid color-mix(in srgb,var(--c) 60%,transparent);color:var(--c);background:color-mix(in srgb,var(--c) 12%,transparent);white-space:nowrap}
+.du{color:var(--mu);font-size:13px;min-width:40px;text-align:right;font-variant-numeric:tabular-nums}
+.ac{display:flex;gap:2px}
+.ib{background:none;border:0;cursor:pointer;color:var(--mu);width:34px;height:34px;border-radius:50%;display:grid;place-items:center;transition:.2s}
+.ib:hover{color:var(--tx);background:rgba(255,255,255,.08)}
+.ib.on{color:#ff4d6d}.ib.on svg{fill:#ff4d6d}
+.tr .ib.x{opacity:0}.tr:hover .ib.x{opacity:1}
+.empty{text-align:center;color:var(--mu);padding:70px 16px;border:1px dashed var(--gb);border-radius:20px}
+.empty b{display:block;color:var(--tx);font-size:19px;margin-bottom:6px}
+/* player */
+#pl{position:fixed;left:12px;right:12px;bottom:12px;z-index:30;max-width:1276px;margin:auto;display:grid;grid-template-columns:1fr 1.5fr 1fr;gap:16px;align-items:center;padding:12px 18px;box-shadow:0 -10px 50px rgba(0,0,0,.5),0 0 40px -12px var(--ac)}
+.np{display:flex;gap:12px;align-items:center;min-width:0}
+.np .cv{width:52px;height:52px}
+.ctl{display:flex;flex-direction:column;gap:6px;align-items:center}
+.cb{display:flex;gap:8px;align-items:center}
+.cb .ib{width:38px;height:38px}.cb .ib.on{color:var(--ac)}.cb .ib.on svg{fill:none}
+.pp{width:46px!important;height:46px!important;background:var(--ac)!important;color:#0B0D11!important;border-radius:50%;box-shadow:0 4px 20px -2px var(--ac)}
+.pp:hover{transform:scale(1.07)}
+.sk{display:flex;gap:10px;align-items:center;width:100%;font-size:12px;color:var(--mu);font-variant-numeric:tabular-nums}
+input[type=range]{-webkit-appearance:none;appearance:none;flex:1;height:5px;border-radius:5px;background:linear-gradient(90deg,var(--ac) var(--p,0%),rgba(255,255,255,.16) var(--p,0%));outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;height:13px;border-radius:50%;background:#fff;box-shadow:0 0 10px var(--ac)}
+input[type=range]::-moz-range-thumb{width:13px;height:13px;border:0;border-radius:50%;background:#fff}
+.rt{display:flex;gap:10px;align-items:center;justify-content:flex-end}
+#viz{width:150px;height:40px}
+.vo{display:flex;align-items:center;gap:4px;width:130px}
+#vbox{position:fixed;right:16px;bottom:112px;z-index:25;width:300px;border-radius:16px;overflow:hidden;border:1px solid var(--gb);background:#000;box-shadow:0 10px 40px rgba(0,0,0,.6);display:none}
+#ytw{aspect-ratio:16/9;display:none}#scw{height:120px;display:none}
+#vbox iframe{width:100%;height:100%;border:0;display:block}
+dialog{background:#151922;color:var(--tx);border:1px solid var(--gb);border-radius:20px;padding:24px;width:min(500px,94vw);margin:auto;max-height:92vh;overflow:auto}
+dialog::backdrop{background:rgba(4,5,8,.8);backdrop-filter:blur(5px)}
+dialog h2{margin-bottom:4px}
+label{display:block;font-size:12.5px;color:var(--mu);margin:13px 0 5px}
+.row{display:flex;gap:10px}.row>*{flex:1;min-width:0}
+.foot{display:flex;justify-content:flex-end;gap:8px;margin-top:20px;flex-wrap:wrap}
+.tabs{display:flex;gap:6px;background:rgba(0,0,0,.3);padding:4px;border-radius:12px;margin:12px 0 4px}
+.tabs div{flex:1;text-align:center;padding:7px;border-radius:9px;cursor:pointer;color:var(--mu)}
+.tabs div.on{background:var(--ac);color:#0B0D11;font-weight:700}
+.drop{border:2px dashed var(--gb);border-radius:14px;padding:20px 12px;text-align:center;color:var(--mu);cursor:pointer;transition:.2s}
+.drop:hover,.drop.ov{border-color:var(--ac);color:var(--ac)}
+.drop b{display:block;color:var(--tx)}
+.chips{display:flex;gap:7px;flex-wrap:wrap}
+.chip{padding:6px 13px;border-radius:99px;border:1px solid var(--gb);cursor:pointer;font-size:13px;background:rgba(255,255,255,.04);transition:.2s;user-select:none}
+.chip:hover{border-color:var(--c,var(--ac))}.chip.on{background:var(--c,var(--ac));border-color:var(--c,var(--ac));color:#0B0D11;font-weight:700}
+.cvp{display:flex;gap:12px;align-items:center}
+.sw{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.sw i{width:28px;height:28px;border-radius:8px;cursor:pointer;border:2px solid transparent}.sw i.on{border-color:#fff;transform:scale(1.14)}
+#toast{position:fixed;left:50%;top:22px;transform:translate(-50%,-30px);background:#1c2130;border:1px solid var(--ac);padding:10px 20px;border-radius:99px;opacity:0;pointer-events:none;transition:.3s;z-index:99}
+#toast.on{opacity:1;transform:translate(-50%,0)}
+#dz{position:fixed;inset:0;z-index:90;display:none;place-items:center;background:color-mix(in srgb,var(--ac) 14%,transparent);border:4px dashed var(--ac);font-size:24px;font-weight:800;color:var(--ac);backdrop-filter:blur(3px);pointer-events:none}
+@media(max-width:860px){
+.app{grid-template-columns:1fr;padding:12px 12px 190px}
+aside{position:static;max-height:none;display:flex;gap:8px;overflow-x:auto;padding:8px}
+.logo,.side-a{display:none}
+.mi{flex:none;padding:8px 14px;white-space:nowrap}.mi small{display:none}
+#pl{grid-template-columns:1fr;gap:8px;padding:10px 14px;left:6px;right:6px;bottom:6px}
+.rt{display:none}
+.tr{grid-template-columns:48px 1fr auto auto}.tr .mb,.tr .du{display:none}.tr .ib.x{opacity:1}
+#vbox{bottom:170px;width:240px;right:8px}
+.hd h1{font-size:25px}}
+</style>
+</head>
+<body>
+<div id="dz">Відпусти аудіофайли, щоб додати</div>
+<div class="app">
+  <aside class="glass" id="side"></aside>
+  <main>
+    <div class="bar">
+      <input type="search" id="q" placeholder="Пошук за назвою, виконавцем або настроєм…">
+      <button class="btn p" onclick="openAdd()"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Додати трек</button>
+      <button class="btn" id="demoBtn" onclick="clearDemo()" style="display:none">Очистити демо</button>
+    </div>
+    <div class="hd" id="hd"></div>
+    <div id="list"></div>
+  </main>
+</div>
+
+<div id="vbox"><div id="ytw"><div id="ytbox"></div></div><div id="scw"></div></div>
+
+<div id="pl" class="glass">
+  <div class="np"><div class="cv" id="pc"></div><div class="ti" style="min-width:0"><b id="pt">Обери трек</b><small id="pa">—</small></div><button class="ib" id="pf" onclick="favCur()"><svg viewBox="0 0 24 24"><path d="M12 21s-7-4.6-9.3-9A5.3 5.3 0 0 1 12 6.2 5.3 5.3 0 0 1 21.3 12C19 16.4 12 21 12 21z"/></svg></button></div>
+  <div class="ctl">
+    <div class="cb">
+      <button class="ib" id="bsh" title="Перемішати" onclick="shuffle=!shuffle;ui()"><svg viewBox="0 0 24 24"><path d="M16 3h5v5M4 20 21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg></button>
+      <button class="ib" title="Попередній" onclick="prev()"><svg class="f" viewBox="0 0 24 24"><path d="M6 5h2v14H6zM20 5v14L9 12z"/></svg></button>
+      <button class="ib pp" id="bpp" title="Play / Pause (пробіл)" onclick="toggle()"></button>
+      <button class="ib" title="Наступний" onclick="next()"><svg class="f" viewBox="0 0 24 24"><path d="M16 5h2v14h-2zM4 5l11 7L4 19z"/></svg></button>
+      <button class="ib" id="brp" title="Повтор треку" onclick="rep=!rep;ui()"><svg viewBox="0 0 24 24"><path d="M17 2l4 4-4 4M3 11V9a3 3 0 0 1 3-3h15M7 22l-4-4 4-4M21 13v2a3 3 0 0 1-3 3H3"/></svg></button>
+    </div>
+    <div class="sk"><span id="tc">0:00</span><input type="range" id="sk" min="0" max="1000" value="0"><span id="td">0:00</span></div>
+  </div>
+  <div class="rt"><canvas id="viz" width="300" height="80"></canvas>
+    <div class="vo"><button class="ib" id="bmu" title="Mute" onclick="mute()"></button><input type="range" id="vo" min="0" max="100" value="80"></div></div>
+</div>
+<dialog id="dlg"></dialog>
+<div id="toast"></div>
+
+<script>
+'use strict';
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const uid=()=>Math.random().toString(36).slice(2,9)+Date.now().toString(36).slice(-3);
+const PAL=['#8b5cff','#FF5722','#00E5FF','#3ddc84','#ff3d71','#ffd740','#6c8cff','#ff9100','#e040fb','#69f0ae'];
+const IC={
+ play:'<svg class="f" viewBox="0 0 24 24"><path d="M7 4l13 8-13 8z"/></svg>',
+ pause:'<svg class="f" viewBox="0 0 24 24"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg>',
+ vol:'<svg viewBox="0 0 24 24"><path d="M11 5 6 9H2v6h4l5 4zM15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14"/></svg>',
+ mute:'<svg viewBox="0 0 24 24"><path d="M11 5 6 9H2v6h4l5 4zM22 9l-6 6M16 9l6 6"/></svg>',
+ heart:'<svg viewBox="0 0 24 24"><path d="M12 21s-7-4.6-9.3-9A5.3 5.3 0 0 1 12 6.2 5.3 5.3 0 0 1 21.3 12C19 16.4 12 21 12 21z"/></svg>',
+ edit:'<svg viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>',
+ del:'<svg viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg>'};
+const DEF=[['Нічний чіл','🌙','#8b5cff'],['Драйв / Енергія','🔥','#FF5722'],['Під катку / Ігри','🎮','#ff3d71'],['В дорогу','🚗','#00E5FF'],['Сумний / Задумливий','🌧','#6c8cff'],['Спокій / Фокус','🌿','#3ddc84']];
+/* ---------- стан ---------- */
+const LS='mmh_v1';
+let S=null;try{S=JSON.parse(localStorage.getItem(LS))}catch(e){}
+if(!S||!S.moods)S={moods:DEF.map(([name,emoji,color])=>({id:uid(),name,emoji,color})),tracks:[],demoDone:false};
+const save=()=>{try{localStorage.setItem(LS,JSON.stringify(S))}catch(e){toast('Не вдалося зберегти налаштування')}};
+let view='all',sq='';
+const M=id=>S.moods.find(m=>m.id===id),T=id=>S.tracks.find(t=>t.id===id);
+/* ---------- IndexedDB для аудіо та обкладинок ---------- */
+const dbp=new Promise((res,rej)=>{try{const r=indexedDB.open('mmh',1);r.onupgradeneeded=()=>r.result.createObjectStore('b');r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)}catch(e){rej(e)}});
+const bt=async(mode,fn)=>{const db=await dbp;return new Promise((res,rej)=>{const t=db.transaction('b',mode),o=fn(t.objectStore('b'));t.oncomplete=()=>res(o&&o.result);t.onerror=()=>rej(t.error)})};
+const bput=(k,v)=>bt('readwrite',s=>s.put(v,k)),bget=k=>bt('readonly',s=>s.get(k)),bdel=k=>bt('readwrite',s=>s.delete(k));
+const CV={};
+async function loadCovers(){for(const t of S.tracks){if(t.hasCover&&!CV[t.id]){try{const b=await bget('c_'+t.id);if(b)CV[t.id]=URL.createObjectURL(b)}catch(e){}}}}
+let tt;function toast(t){const e=$('toast');e.textContent=t;e.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>e.classList.remove('on'),2400)}
+const fmtT=s=>{if(!isFinite(s)||s<0)return '0:00';s=Math.floor(s);return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')};
+const initial=t=>(t.title||'?').trim()[0]?.toUpperCase()||'?';
+function coverHTML(t,eq){
+  const m=M(t.moodId),c=m?m.color:'#8b5cff',src=CV[t.id]||t.coverUrl;
+  return `<div class="cv" style="background:linear-gradient(135deg,${c},#0B0D11)">${esc(initial(t))}${src?`<img src="${esc(src)}" alt="" onerror="this.remove()">`:''}${eq?'<div class="eq"><i></i><i></i><i></i></div>':''}</div>`;
+}
+/* ---------- рендер ---------- */
+function list(){const q=sq.toLowerCase();return S.tracks.filter(t=>(view==='all'||(view==='fav'?t.fav:t.moodId===view))&&(!q||(t.title+' '+t.artist+' '+(M(t.moodId)?.name||'')).toLowerCase().includes(q))).sort((a,b)=>b.ts-a.ts)}
+function accent(){const m=M(view)||(cur&&M(cur.moodId));ACC=m?m.color:'#8b5cff';document.documentElement.style.setProperty('--ac',ACC)}
+let ACC='#8b5cff';
+function render(){
+  if(view!=='all'&&view!=='fav'&&!M(view))view='all';
+  accent();
+  const cnt=m=>S.tracks.filter(t=>t.moodId===m).length;
+  $('side').innerHTML=`<div class="logo">MOOD <b>MUSIC</b> HUB</div>`+
+   `<div class="mi ${view==='all'?'on':''}" style="--c:#8b5cff" onclick="go('all')"><div class="em">♪</div><span class="n">Усі треки</span><small>${S.tracks.length}</small></div>`+
+   S.moods.map(m=>`<div class="mi ${view===m.id?'on':''}" style="--c:${m.color}" onclick="go('${m.id}')"><div class="em">${esc(m.emoji)}</div><span class="n">${esc(m.name)}</span><small>${cnt(m.id)}</small></div>`).join('')+
+   `<div class="mi ${view==='fav'?'on':''}" style="--c:#ff4d6d" onclick="go('fav')"><div class="em">❤️</div><span class="n">Улюблені</span><small>${S.tracks.filter(t=>t.fav).length}</small></div>`+
+   `<div class="mi" style="--c:#8b5cff" onclick="openMood()"><div class="em">+</div><span class="n">Новий настрій</span></div>`+
+   `<div class="side-a"><button class="btn s" onclick="exp()">Експорт (JSON)</button><button class="btn s" onclick="$('imp').click()">Імпорт</button><input type="file" id="imp" accept=".json" hidden onchange="imp(this)"></div>`;
+  const m=M(view),l=list();
+  const name=view==='all'?'Усі треки':view==='fav'?'Улюблені ❤️':`${m.emoji} ${m.name}`;
+  $('hd').innerHTML=`<div><h1><span>${esc(name)}</span></h1><small>${l.length} ${l.length===1?'трек':'треків'}</small></div><div class="sp"></div>`+
+   (l.length?`<button class="btn p" onclick="playList(false)">${IC.play}Відтворити</button><button class="btn" onclick="playList(true)">Перемішати</button>`:'')+
+   (m?`<button class="btn s" onclick="openMood('${m.id}')">Змінити настрій</button>`:'');
+  $('list').innerHTML=l.length?l.map(row).join(''):`<div class="empty"><b>${S.tracks.length?'Нічого не знайдено':'Бібліотека порожня'}</b>Перетягни аудіофайл на сторінку або натисни «Додати трек».</div>`;
+  $('demoBtn').style.display=S.tracks.some(t=>t.demo)?'':'none';
+  ui();
+}
+function row(t){
+  const m=M(t.moodId),on=cur&&cur.id===t.id;
+  return `<div class="tr ${on?'on':''} ${on&&playing?'pl':''}" data-id="${t.id}" onclick="clickRow('${t.id}')">${coverHTML(t,1)}
+  <div class="ti"><b>${esc(t.title)}</b><small>${esc(t.artist||'Невідомий виконавець')}${t.type==='yt'?' · YouTube':t.type==='sc'?' · SoundCloud':''}</small></div>
+  ${m?`<span class="mb" style="--c:${m.color}">${esc(m.emoji)} ${esc(m.name)}</span>`:'<span></span>'}
+  <span class="du">${t.dur?fmtT(t.dur):''}</span>
+  <div class="ac"><button class="ib ${t.fav?'on':''}" onclick="event.stopPropagation();fav('${t.id}')">${IC.heart}</button><button class="ib x" onclick="event.stopPropagation();openEdit('${t.id}')">${IC.edit}</button><button class="ib x" onclick="event.stopPropagation();delT('${t.id}')">${IC.del}</button></div></div>`;
+}
+const go=v=>{view=v;render()};
+$('q').oninput=e=>{sq=e.target.value;render()};
+function fav(id){const t=T(id);t.fav=!t.fav;save();render()}
+function favCur(){if(cur)fav(cur.id)}
+async function delT(id){
+  if(!confirm('Видалити трек?'))return;
+  if(cur&&cur.id===id)stopAll(true);
+  S.tracks=S.tracks.filter(t=>t.id!==id);save();
+  try{await bdel(id);await bdel('c_'+id)}catch(e){}
+  if(CV[id]){URL.revokeObjectURL(CV[id]);delete CV[id]}
+  render();
+}
+async function clearDemo(){
+  const d=S.tracks.filter(t=>t.demo);if(!d.length)return;
+  if(cur&&cur.demo)stopAll(true);
+  for(const t of d){try{await bdel(t.id);await bdel('c_'+t.id)}catch(e){}}
+  S.tracks=S.tracks.filter(t=>!t.demo);save();render();toast('Демо очищено');
+}
+
+/* ---------- програвач ---------- */
+const A=new Audio(),B=new Audio();A.preload=B.preload='metadata';
+let Q=[],cur=null,playing=false,shuffle=false,rep=false,kind='',vol=.8,muted=false,tok=0,objUrl='',scT=0,scD=0,seeking=false;
+let actx,an,fa;
+function initCtx(){if(actx)return;try{actx=new(window.AudioContext||window.webkitAudioContext)();an=actx.createAnalyser();an.fftSize=128;an.smoothingTimeConstant=.82;const s=actx.createMediaElementSource(A);s.connect(an);an.connect(actx.destination);fa=new Uint8Array(an.frequencyBinCount)}catch(e){actx=null}}
+let ytP=null,ytPr=null,scW=null,scPr=null;
+const loadYT=()=>ytPr||(ytPr=new Promise((res,rej)=>{window.onYouTubeIframeAPIReady=()=>res();const s=document.createElement('script');s.src='https://www.youtube.com/iframe_api';s.onerror=rej;document.head.appendChild(s)}));
+const loadSC=()=>scPr||(scPr=new Promise((res,rej)=>{const s=document.createElement('script');s.src='https://w.soundcloud.com/player/api.js';s.onload=res;s.onerror=rej;document.head.appendChild(s)}));
+function box(k){$('vbox').style.display=k?'block':'none';$('ytw').style.display=k==='yt'?'block':'none';$('scw').style.display=k==='sc'?'block':'none'}
+function stopAll(clear){
+  tok++;A.pause();B.pause();try{ytP&&ytP.pauseVideo&&ytP.pauseVideo()}catch(e){}try{scW&&scW.pause()}catch(e){}
+  playing=false;if(clear){cur=null;kind='';box('');A.removeAttribute('src');B.removeAttribute('src')}
+}
+async function playTrack(id,queue){
+  const t=T(id);if(!t)return;if(queue)Q=queue;
+  stopAll();const my=tok;cur=t;kind=t.type==='file'?'a':t.type==='url'?'b':t.type;playing=true;box('');render();
+  try{
+    if(kind==='a'){
+      const blob=await bget(t.id);if(my!==tok)return;if(!blob){toast('Файл не знайдено');playing=false;ui();return}
+      if(objUrl)URL.revokeObjectURL(objUrl);objUrl=URL.createObjectURL(blob);
+      initCtx();if(actx&&actx.state==='suspended')await actx.resume();
+      A.src=objUrl;A.volume=vol;A.muted=muted;await A.play();
+    }else if(kind==='b'){B.src=t.ref;B.volume=vol;B.muted=muted;await B.play()}
+    else if(kind==='yt'){await playYT(t.ref,my)}
+    else if(kind==='sc'){await playSC(t.ref,my)}
+  }catch(e){if(my===tok){playing=false;ui();toast('Не вдалося відтворити цей трек')}}
+}
+async function playYT(id,my){
+  await loadYT();if(my!==tok)return;box('yt');
+  if(ytP&&ytP.loadVideoById){ytP.loadVideoById(id);ytP.setVolume(vol*100);return}
+  await new Promise(res=>{ytP=new YT.Player('ytbox',{width:'100%',height:'100%',videoId:id,playerVars:{autoplay:1,playsinline:1,rel:0},events:{
+    onReady:e=>{e.target.setVolume(vol*100);if(muted)e.target.mute();e.target.playVideo();res()},
+    onStateChange:e=>{if(kind!=='yt')return;if(e.data===0)next(true);playing=e.data===1;ui()},
+    onError:()=>{if(kind!=='yt')return;playing=false;ui();toast('Це відео заборонено вбудовувати. Пропускаю');setTimeout(()=>{if(kind==='yt')next()},1200)}}})});
+}
+async function playSC(url,my){
+  await loadSC();if(my!==tok)return;box('sc');scT=0;scD=0;
+  const f=document.createElement('iframe');f.allow='autoplay';f.src='https://w.soundcloud.com/player/?url='+encodeURIComponent(url)+'&auto_play=true&show_comments=false';
+  $('scw').innerHTML='';$('scw').appendChild(f);scW=SC.Widget(f);const E=SC.Widget.Events;
+  scW.bind(E.READY,()=>{scW.setVolume(muted?0:vol*100);scW.getDuration(d=>scD=d/1000)});
+  scW.bind(E.PLAY,()=>{if(kind==='sc'){playing=true;ui()}});scW.bind(E.PAUSE,()=>{if(kind==='sc'){playing=false;ui()}});
+  scW.bind(E.FINISH,()=>{if(kind==='sc')next(true)});scW.bind(E.PLAY_PROGRESS,e=>scT=e.currentPosition/1000);
+}
+function toggle(){
+  if(!cur){const l=list();if(l.length)playTrack(l[0].id,l.map(t=>t.id));return}
+  if(kind==='a'||kind==='b'){const el=kind==='a'?A:B;if(el.paused){if(actx&&actx.state==='suspended')actx.resume();el.play()}else el.pause()}
+  else if(kind==='yt'&&ytP){playing?ytP.pauseVideo():ytP.playVideo()}
+  else if(kind==='sc'&&scW)scW.toggle();
+}
+function getT(){return kind==='a'?A.currentTime:kind==='b'?B.currentTime:kind==='yt'&&ytP&&ytP.getCurrentTime?ytP.getCurrentTime():kind==='sc'?scT:0}
+function getD(){const d=kind==='a'?A.duration:kind==='b'?B.duration:kind==='yt'&&ytP&&ytP.getDuration?ytP.getDuration():kind==='sc'?scD:0;return isFinite(d)?d:0}
+function seekTo(f){const d=getD();if(!d)return;const s=f*d;if(kind==='a')A.currentTime=s;else if(kind==='b')B.currentTime=s;else if(kind==='yt')ytP.seekTo(s,true);else if(kind==='sc')scW.seekTo(s*1000)}
+function next(auto){
+  if(!cur)return;
+  if(auto&&rep){seekTo(0);if(kind==='a'||kind==='b')(kind==='a'?A:B).play();else if(kind==='yt')ytP.playVideo();else if(kind==='sc')scW.play();return}
+  const q=Q.filter(id=>T(id));if(!q.length)return;
+  let i=q.indexOf(cur.id),n;
+  if(shuffle&&q.length>1){do{n=Math.floor(Math.random()*q.length)}while(n===i)}else n=(i+1)%q.length;
+  playTrack(q[n],q);
+}
+function prev(){
+  if(!cur)return;if(getT()>3){seekTo(0);return}
+  const q=Q.filter(id=>T(id));let i=q.indexOf(cur.id);playTrack(q[(i-1+q.length)%q.length],q);
+}
+function playList(sh){const l=list();if(!l.length)return;shuffle=sh;const q=l.map(t=>t.id);playTrack(sh?q[Math.floor(Math.random()*q.length)]:q[0],q)}
+function clickRow(id){if(cur&&cur.id===id){toggle();return}playTrack(id,list().map(t=>t.id))}
+function mute(){muted=!muted;A.muted=B.muted=muted;try{ytP&&(muted?ytP.mute():ytP.unMute());scW&&scW.setVolume(muted?0:vol*100)}catch(e){}ui()}
+$('vo').oninput=e=>{vol=e.target.value/100;A.volume=B.volume=vol;if(muted)mute();try{ytP&&ytP.setVolume&&ytP.setVolume(vol*100);scW&&scW.setVolume(vol*100)}catch(x){}setP(e.target);ui()};
+const setP=el=>el.style.setProperty('--p',(el.value/el.max*100)+'%');
+const sk=$('sk');
+sk.oninput=()=>{seeking=true;setP(sk);$('tc').textContent=fmtT(sk.value/1000*getD())};
+sk.onchange=()=>{seekTo(sk.value/1000);seeking=false};
+[A,B].forEach((el,i)=>{
+  const k=i?'b':'a';
+  el.onplay=()=>{if(kind===k){playing=true;ui()}};el.onpause=()=>{if(kind===k){playing=false;ui()}};
+  el.onended=()=>{if(kind===k)next(true)};
+  el.onloadedmetadata=()=>{if(kind===k&&cur&&!cur.dur&&isFinite(el.duration)){cur.dur=el.duration;save();render()}};
+  el.onerror=()=>{if(kind===k&&cur&&el.getAttribute('src')){playing=false;ui();toast('Не вдалося відтворити цей трек')}};
+});
+function ui(){
+  accent();
+  $('bpp').innerHTML=playing?IC.pause:IC.play;
+  $('bsh').classList.toggle('on',shuffle);$('brp').classList.toggle('on',rep);
+  $('bmu').innerHTML=muted||vol===0?IC.mute:IC.vol;
+  $('pt').textContent=cur?cur.title:'Обери трек';$('pa').textContent=cur?(cur.artist||'Невідомий виконавець'):'—';
+  $('pc').outerHTML=cur?coverHTML(cur).replace('class="cv"','class="cv" id="pc"'):'<div class="cv" id="pc" style="background:#232838">♪</div>';
+  $('pf').classList.toggle('on',!!(cur&&cur.fav));
+  document.title=cur&&playing?`${cur.title} · Mood Music Hub`:'Mood Music Hub';
+  document.querySelectorAll('.tr').forEach(r=>{const on=cur&&r.dataset.id===cur.id;r.classList.toggle('on',!!on);r.classList.toggle('pl',!!(on&&playing))});
+  setP($('vo'));
+}
+setInterval(()=>{
+  const d=getD(),t=getT();$('td').textContent=fmtT(d);if(!seeking){$('tc').textContent=fmtT(t);sk.value=d?t/d*1000:0;setP(sk)}
+  if(cur&&d&&!cur.dur&&kind!=='a'&&kind!=='b'){cur.dur=d;save()}
+},250);
+/* візуалізація */
+const vz=$('viz'),vx=vz.getContext('2d');
+(function draw(){
+  requestAnimationFrame(draw);if(vz.offsetParent===null)return;
+  const w=vz.width,h=vz.height,n=26,bw=w/n;vx.clearRect(0,0,w,h);
+  const real=playing&&kind==='a'&&an;if(real)an.getByteFrequencyData(fa);
+  const now=Date.now();
+  for(let i=0;i<n;i++){
+    let v=real?fa[Math.floor(i*fa.length*.75/n)]/255:playing?.18+.2*Math.abs(Math.sin(now/260+i*.55))*Math.abs(Math.sin(now/900+i)):.04;
+    const bh=Math.max(4,v*h);vx.fillStyle=ACC;vx.globalAlpha=.35+v*.65;
+    vx.beginPath();vx.roundRect(i*bw+2,h-bh,bw-5,bh,3);vx.fill();
+  }
+  vx.globalAlpha=1;
+})();
+document.addEventListener('keydown',e=>{
+  if(e.code!=='Space'||$('dlg').open)return;
+  const el=document.activeElement,tg=el.tagName;
+  if(tg==='TEXTAREA'||tg==='SELECT'||(tg==='INPUT'&&el.type!=='range'))return;
+  e.preventDefault();toggle();
+});
+
+/* ---------- додавання / редагування ---------- */
+const dlg=$('dlg');
+let D=null;
+const AUD=/\.(mp3|wav|ogg|oga|flac|m4a|aac|opus|webm)$/i;
+const isAud=f=>f.type.startsWith('audio/')||AUD.test(f.name);
+function parseName(n){
+  n=n.replace(/\.[^.]+$/,'').replace(/[_]+/g,' ').trim();
+  const i=n.indexOf(' - ');return i>0?{artist:n.slice(0,i).trim(),title:n.slice(i+3).trim()}:{artist:'',title:n};
+}
+function durOf(blob){return new Promise(res=>{const a=new Audio(),u=URL.createObjectURL(blob);a.preload='metadata';a.onloadedmetadata=()=>{res(isFinite(a.duration)?a.duration:0);URL.revokeObjectURL(u)};a.onerror=()=>{res(0);URL.revokeObjectURL(u)};a.src=u})}
+async function packCover(f){
+  const b=await createImageBitmap(f),k=Math.min(1,600/Math.max(b.width,b.height)),c=document.createElement('canvas');
+  c.width=Math.round(b.width*k);c.height=Math.round(b.height*k);c.getContext('2d').drawImage(b,0,0,c.width,c.height);
+  return new Promise(r=>c.toBlob(r,'image/webp',.85));
+}
+function openAdd(files){
+  D={edit:null,mode:'file',files:[],cover:null,coverUrl:'',mood:(M(view)?view:S.moods[0]?.id)||''};
+  dlg.innerHTML=`<h2>Новий трек</h2>
+  <div class="tabs"><div id="t_f" class="on" onclick="setMode('file')">Файл</div><div id="t_l" onclick="setMode('link')">Посилання</div></div>
+  <div id="s_f"><label>Аудіофайл (MP3, WAV, OGG, FLAC), можна кілька</label><div class="drop" id="d_dr" onclick="$('d_f').click()"><b id="d_fn">Натисни або перетягни файли сюди</b></div><input type="file" id="d_f" accept="audio/*,.mp3,.wav,.ogg,.flac,.m4a" multiple hidden></div>
+  <div id="s_l" style="display:none"><label>Посилання на трек: YouTube Music, YouTube, SoundCloud або пряме на MP3. Можна кілька, кожне з нового рядка</label><textarea id="d_u" rows="3" placeholder="https://music.youtube.com/watch?v=…"></textarea>
+  <div style="margin-top:8px"><a class="btn s" href="https://music.youtube.com" target="_blank" rel="noopener" style="text-decoration:none">Відкрити YouTube Music</a> <span class="hint" style="color:var(--mu);font-size:12.5px">Скопіюй посилання на пісню й встав сюди. Або просто натисни Ctrl+V на цій сторінці.</span></div></div>
+  <div class="row"><div><label>Назва</label><input type="text" id="d_t" placeholder="з імені файлу"></div><div><label>Виконавець</label><input type="text" id="d_a"></div></div>
+  <label>Настрій</label><div class="chips" id="d_m"></div>
+  <label>Обкладинка (необов'язково): встав через Ctrl+V або вибери файл</label><div class="cvp" id="d_cv"></div><input type="file" id="d_cf" accept="image/*" hidden>
+  <div class="foot"><button class="btn" onclick="dlg.close()">Скасувати</button><button class="btn p" id="d_s" onclick="saveAdd()">Додати</button></div>`;
+  dlg.showModal();dMoods();dCover();
+  $('d_f').onchange=e=>{setFiles([...e.target.files]);e.target.value=''};
+  $('d_cf').onchange=async e=>{const f=e.target.files[0];if(f){D.cover=await packCover(f);dCover()}};
+  const dr=$('d_dr');dr.ondragover=e=>{e.preventDefault();dr.classList.add('ov')};dr.ondragleave=()=>dr.classList.remove('ov');
+  dr.ondrop=e=>{e.preventDefault();e.stopPropagation();dr.classList.remove('ov');setFiles([...e.dataTransfer.files])};
+  if(files&&files.length)setFiles(files);
+}
+function setMode(m){D.mode=m;$('t_f').classList.toggle('on',m==='file');$('t_l').classList.toggle('on',m==='link');$('s_f').style.display=m==='file'?'':'none';$('s_l').style.display=m==='link'?'':'none'}
+function setFiles(fs){
+  fs=fs.filter(isAud);if(!fs.length){toast('Потрібні аудіофайли');return}
+  D.files=fs;$('d_fn').textContent=fs.length===1?fs[0].name:`Файлів: ${fs.length}`;
+  const one=fs.length===1;$('d_t').disabled=!one;$('d_t').placeholder=one?'':'назви з імен файлів';
+  if(one){const p=parseName(fs[0].name);$('d_t').value=p.title;if(!$('d_a').value)$('d_a').value=p.artist}else $('d_t').value='';
+}
+function dMoods(){$('d_m').innerHTML=S.moods.map(m=>`<div class="chip ${D.mood===m.id?'on':''}" style="--c:${m.color}" onclick="D.mood='${m.id}';dMoods()">${esc(m.emoji)} ${esc(m.name)}</div>`).join('')+`<div class="chip" onclick="openMood()">+ свій</div>`}
+function dCover(){
+  const m=M(D.mood),c=m?m.color:'#8b5cff';
+  const u=D.cover?(D.prev=D.prev||URL.createObjectURL(D.cover)):(D.coverUrl||'');
+  $('d_cv').innerHTML=`<div class="cv" style="background:linear-gradient(135deg,${c},#0B0D11);width:64px;height:64px">${u?`<img src="${esc(u)}">`:'♪'}</div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn s" onclick="$('d_cf').click()">Вибрати</button>${u?`<button class="btn s d" onclick="D.cover=null;D.prev='';D.coverUrl='';dCover()">Прибрати</button>`:''}</div>`;
+}
+document.addEventListener('paste',async e=>{
+  if(!dlg.open||!D||!$('d_cv'))return;
+  const f=[...(e.clipboardData?.files||[])].find(x=>x.type.startsWith('image/'));
+  if(f){e.preventDefault();D.cover=await packCover(f);D.prev='';dCover();toast('Обкладинку додано')}
+});
+function ytId(u){
+  try{
+    const x=new URL(u),h=x.hostname;
+    if(h==='youtu.be')return x.pathname.slice(1,12);
+    if(/(^|\.)youtube\.com$/.test(h)){
+      const v=x.searchParams.get('v');if(v&&v.length===11)return v;
+      const m=x.pathname.match(/\/(?:shorts|embed|live)\/([\w-]{11})/);if(m)return m[1];
+    }
+  }catch(e){}
+  return '';
+}
+/* Ctrl+V посилання з YouTube Music / YouTube / SoundCloud будь-де на сторінці відкриває додавання */
+document.addEventListener('paste',e=>{
+  if(dlg.open)return;
+  const tg=document.activeElement.tagName;if(tg==='INPUT'||tg==='TEXTAREA')return;
+  const t=(e.clipboardData?.getData('text')||'').trim();
+  if(/^https?:\/\/\S+$/.test(t)&&/youtu|soundcloud\.com/.test(t)){e.preventDefault();openAdd();setMode('link');$('d_u').value=t;toast('Посилання підхоплено')}
+});
+function parseLink(u){
+  const id=ytId(u);
+  if(id)return{type:'yt',ref:id,cover:`https://img.youtube.com/vi/${id}/hqdefault.jpg`};
+  if(/youtube\.com|youtu\.be/.test(u))return{type:'bad'};
+  if(/soundcloud\.com/.test(u))return{type:'sc',ref:u};
+  return{type:'url',ref:u};
+}
+async function oembed(p,u){
+  try{
+    const url=p.type==='yt'?`https://www.youtube.com/oembed?format=json&url=${encodeURIComponent('https://www.youtube.com/watch?v='+p.ref)}`:`https://soundcloud.com/oembed?format=json&url=${encodeURIComponent(u)}`;
+    const r=await fetch(url);if(!r.ok)return null;return await r.json();
+  }catch(e){return null}
+}
+async function saveAdd(){
+  const btn=$('d_s'),title=$('d_t').value.trim(),artist=$('d_a').value.trim();
+  if(!D.mood){toast('Створи настрій');return}
+  btn.disabled=true;btn.textContent='Зберігаю…';
+  try{
+    const add=[];
+    if(D.mode==='file'){
+      if(!D.files.length){toast('Обери аудіофайл');btn.disabled=false;btn.textContent='Додати';return}
+      for(const f of D.files){
+        const id=uid(),p=parseName(f.name),one=D.files.length===1;
+        await bput(id,f);
+        add.push({id,title:(one&&title)||p.title||'Без назви',artist:artist||p.artist,moodId:D.mood,type:'file',dur:await durOf(f)});
+      }
+    }else{
+      const urls=[...new Set($('d_u').value.split(/\s+/).map(x=>x.trim()).filter(Boolean))];
+      if(!urls.length||urls.some(u=>!/^https?:\/\/\S+$/.test(u))){toast('Встав посилання на трек, кожне з нового рядка');btn.disabled=false;btn.textContent='Додати';return}
+      let dup=0;
+      for(const u of urls){
+        const p=parseLink(u);
+        if(p.type==='bad')continue;
+        if(S.tracks.some(t=>t.ref===p.ref)||add.some(t=>t.ref===p.ref)){dup++;continue}
+        const one=urls.length===1;let tt=one?title:'',aa=one?artist:'',cu=D.coverUrl||p.cover||'';
+        if(p.type!=='url'&&(!tt||!aa)){const o=await oembed(p,u);if(o){tt=tt||o.title;aa=aa||(o.author_name||'').replace(/\s*-\s*Topic$/i,'');if(p.type==='sc'&&!D.cover&&o.thumbnail_url)cu=o.thumbnail_url}}
+        if(!tt){try{tt=decodeURIComponent(new URL(u).pathname.split('/').pop()||'').replace(/\.[^.]+$/,'')||new URL(u).hostname}catch(e){tt='Трек'}}
+        add.push({id:uid(),title:tt,artist:aa||'',moodId:D.mood,type:p.type,ref:p.ref,coverUrl:cu,dur:0});
+      }
+      if(!add.length){toast(dup?'Ці треки вже є в бібліотеці':'Не знайшов трек у посиланні. Встав посилання на конкретну пісню, не на плейлист');btn.disabled=false;btn.textContent='Додати';return}
+    }
+    for(const t of add){
+      t.fav=false;t.ts=Date.now()+add.indexOf(t);
+      if(D.cover){await bput('c_'+t.id,D.cover);t.hasCover=true}
+      S.tracks.push(t);
+    }
+    save();await loadCovers();dlg.close();
+    if(view!=='all'&&view!=='fav'&&view!==D.mood)view=D.mood;
+    render();toast(add.length>1?`Додано треків: ${add.length}`:'Трек додано');
+  }catch(e){toast('Помилка збереження');btn.disabled=false;btn.textContent='Додати'}
+}
+function openEdit(id){
+  const t=T(id);D={edit:id,cover:null,coverUrl:t.coverUrl||'',mood:t.moodId,drop:false,prev:CV[id]||''};
+  if(CV[id])D.coverUrl=CV[id];
+  dlg.innerHTML=`<h2>Змінити трек</h2>
+  <div class="row"><div><label>Назва</label><input type="text" id="d_t" value="${esc(t.title)}"></div><div><label>Виконавець</label><input type="text" id="d_a" value="${esc(t.artist)}"></div></div>
+  <label>Настрій</label><div class="chips" id="d_m"></div>
+  <label>Обкладинка: Ctrl+V або файл</label><div class="cvp" id="d_cv"></div><input type="file" id="d_cf" accept="image/*" hidden>
+  <div class="foot"><button class="btn" onclick="dlg.close()">Скасувати</button><button class="btn p" onclick="saveEdit()">Зберегти</button></div>`;
+  dlg.showModal();dMoods();dCover();
+  $('d_cf').onchange=async e=>{const f=e.target.files[0];if(f){D.cover=await packCover(f);D.prev='';dCover()}};
+}
+async function saveEdit(){
+  const t=T(D.edit);t.title=$('d_t').value.trim()||t.title;t.artist=$('d_a').value.trim();t.moodId=D.mood;
+  try{
+    if(D.cover){await bput('c_'+t.id,D.cover);t.hasCover=true;if(CV[t.id])URL.revokeObjectURL(CV[t.id]);CV[t.id]=URL.createObjectURL(D.cover)}
+    else if(!D.coverUrl&&!D.prev){await bdel('c_'+t.id);t.hasCover=false;t.coverUrl='';if(CV[t.id]){URL.revokeObjectURL(CV[t.id]);delete CV[t.id]}}
+  }catch(e){}
+  save();dlg.close();render();
+}
+
+/* ---------- настрої ---------- */
+let mC=PAL[0];
+function openMood(id){
+  const m=M(id)||{name:'',emoji:'🎧',color:PAL[S.moods.length%PAL.length]};mC=m.color;
+  const keep=D;dlg.dataset.back=keep&&keep.mode?'1':'';
+  dlg.innerHTML=`<h2>${id?'Змінити настрій':'Новий настрій'}</h2>
+  <div class="row"><div><label>Назва</label><input type="text" id="m_n" value="${esc(m.name)}" placeholder="Наприклад: Ранок"></div><div style="flex:.35"><label>Емодзі</label><input type="text" id="m_e" value="${esc(m.emoji)}" maxlength="4"></div></div>
+  <label>Колір акценту</label><div class="sw" id="m_c"></div>
+  <div class="foot">${id?`<button class="btn d" onclick="delMood('${id}')" style="margin-right:auto">Видалити</button>`:''}<button class="btn" onclick="dlg.close()">Скасувати</button><button class="btn p" onclick="saveMood('${id||''}')">Зберегти</button></div>`;
+  if(!dlg.open)dlg.showModal();mSw();
+}
+function mSw(){$('m_c').innerHTML=PAL.map(c=>`<i style="background:${c}" class="${c===mC?'on':''}" onclick="mC='${c}';mSw()"></i>`).join('')+`<input type="color" value="${mC}" style="width:44px;height:28px;padding:1px" onchange="mC=this.value;mSw()">`}
+function saveMood(id){
+  const n=$('m_n').value.trim();if(!n){$('m_n').focus();return}
+  const o={name:n,emoji:$('m_e').value.trim()||'🎧',color:mC};
+  if(id)Object.assign(M(id),o);else{const m={id:uid(),...o};S.moods.push(m);view=m.id}
+  save();dlg.close();render();
+}
+function delMood(id){
+  if(!confirm('Видалити настрій? Треки залишаться без настрою.'))return;
+  S.tracks.forEach(t=>{if(t.moodId===id)t.moodId=''});S.moods=S.moods.filter(m=>m.id!==id);view='all';save();dlg.close();render();
+}
+dlg.addEventListener('close',()=>{D=D&&D.edit?null:D});
+
+/* ---------- drag & drop на всю сторінку ---------- */
+let dc=0;
+addEventListener('dragenter',e=>{if(e.dataTransfer&&[...e.dataTransfer.types].includes('Files')&&!dlg.open){dc++;$('dz').style.display='grid'}});
+addEventListener('dragleave',()=>{if(--dc<=0){dc=0;$('dz').style.display='none'}});
+addEventListener('dragover',e=>e.preventDefault());
+addEventListener('drop',e=>{e.preventDefault();dc=0;$('dz').style.display='none';if(dlg.open)return;const fs=[...e.dataTransfer.files].filter(isAud);if(fs.length)openAdd(fs);else if(e.dataTransfer.files.length)toast('Потрібні аудіофайли')});
+
+/* ---------- бекап ---------- */
+function exp(){
+  const tr=S.tracks.filter(t=>t.type!=='file'),sk=S.tracks.length-tr.length;
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify({moods:S.moods,tracks:tr},null,1)],{type:'application/json'}));
+  a.download='mood-music-hub.json';a.click();toast(sk?`Збережено. Локальні файли (${sk}) у JSON не входять`:'Бекап збережено');
+}
+function imp(inp){
+  const f=inp.files[0];inp.value='';if(!f)return;
+  const r=new FileReader();r.onload=()=>{try{
+    const j=JSON.parse(r.result);if(!Array.isArray(j.moods)||!Array.isArray(j.tracks))throw 0;
+    const up=(arr,x)=>{const i=arr.findIndex(y=>y.id===x.id);i>=0?arr[i]=x:arr.push(x)};
+    j.moods.forEach(m=>up(S.moods,m));j.tracks.filter(t=>t.type!=='file').forEach(t=>{t.ts=t.ts||Date.now();up(S.tracks,t)});
+    save();render();toast('Імпорт завершено');
+  }catch(e){toast('Некоректний файл')}};r.readAsText(f);
+}
+
+/* ---------- демо-треки (синтез у браузері) ---------- */
+function synth(prog,bpm,secs,bright){
+  const sr=22050,n=sr*secs,out=new Float32Array(n),step=60/bpm/2;
+  for(let i=0;i<n;i++){
+    const t=i/sr,s=Math.floor(t/step),ch=prog[Math.floor(s/8)%prog.length],f=ch[s%ch.length]*(s%8>=4?2:1),l=t-s*step;
+    const env=(1-Math.exp(-l*90))*Math.exp(-l*(3+bright)),p=2*Math.PI;
+    let v=(Math.sin(p*f*t)+.25*Math.sin(p*f*2*t)*bright/3)*env*.34;
+    for(const c of ch)v+=Math.sin(p*c*t)*.045;
+    v+=Math.sin(p*ch[0]/2*t)*.14*(.6+.4*Math.sin(p*t/(step*4)));
+    const fade=Math.min(1,t*4,(secs-t)*4);out[i]=v*fade;
+  }
+  const buf=new ArrayBuffer(44+n*2),dv=new DataView(buf),w=(o,s)=>[...s].forEach((c,k)=>dv.setUint8(o+k,c.charCodeAt(0)));
+  w(0,'RIFF');dv.setUint32(4,36+n*2,true);w(8,'WAVEfmt ');dv.setUint32(16,16,true);dv.setUint16(20,1,true);dv.setUint16(22,1,true);dv.setUint32(24,sr,true);dv.setUint32(28,sr*2,true);dv.setUint16(32,2,true);dv.setUint16(34,16,true);w(36,'data');dv.setUint32(40,n*2,true);
+  for(let i=0;i<n;i++)dv.setInt16(44+i*2,Math.max(-1,Math.min(1,out[i]))*32000,true);
+  return new Blob([buf],{type:'audio/wav'});
+}
+async function seedDemo(){
+  const find=n=>S.moods.find(m=>m.name.startsWith(n))?.id||S.moods[0].id;
+  const Am=[[220,261.63,329.63],[174.61,220,261.63],[261.63,329.63,392],[196,246.94,293.66]];
+  const Em=[[164.81,196,246.94],[130.81,164.81,196],[196,246.94,293.66],[146.83,185,220]];
+  const C=[[261.63,329.63,392],[196,246.94,293.66],[220,261.63,329.63],[174.61,220,261.63]];
+  const demos=[['Midnight Loop','Mood Hub (демо)','Нічний',Am,68,16,1],['Turbo Pulse','Mood Hub (демо)','Драйв',Em,126,14,6],['Open Road','Mood Hub (демо)','В дорогу',C,96,16,3]];
+  let k=0;
+  for(const [title,artist,mood,prog,bpm,secs,br] of demos){
+    const id=uid();await bput(id,synth(prog,bpm,secs,br));
+    S.tracks.push({id,title,artist,moodId:find(mood),type:'file',dur:secs,fav:false,demo:true,ts:Date.now()+k++});
+  }
+  S.demoDone=true;save();
+}
+/* ---------- старт ---------- */
+(async()=>{
+  try{if(!S.demoDone)await seedDemo();await loadCovers()}catch(e){toast('Сховище браузера недоступне: файли не збережуться')}
+  $('vo').value=vol*100;render();
+})();
+</script>
+</body>
+</html>
